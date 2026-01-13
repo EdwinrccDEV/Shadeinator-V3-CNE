@@ -1,9 +1,0 @@
-FlxG.save.data.don;
-FlxG.save.data.wn;
-FlxG.save.data.dros;
-FlxG.save.data.numr;
-FlxG.save.data.advc;
-FlxG.save.data.slide;
-FlxG.save.data.langs;
-FlxG.save.data.autos;
-FlxG.save.data.autott;
