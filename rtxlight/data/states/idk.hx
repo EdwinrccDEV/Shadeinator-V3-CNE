@@ -28,6 +28,7 @@ var lightSize:UISlider = null;
 var numOfLay:UISlider = null;
 var laySepa:UISlider = null;
 var bff:FlxSprite = null;
+var editinn = null;
 
 // Shader Variables
 var shaderParms = {
@@ -153,6 +154,7 @@ var topMenu = [
 							s.visible = true;
 							s.active = true;
 						}
+						editinn.text = "Editing Top Mask Color";
 				}
 			},
 			{
@@ -185,6 +187,7 @@ var topMenu = [
 							s.visible = true;
 							s.active = true;
 						}
+						editinn.text = "Editing Sprite Color";
 				}
 			},
 			{
@@ -217,40 +220,45 @@ var topMenu = [
 							s.visible = true;
 							s.active = true;
 						}
+						editinn.text = "Editing Light Color";
 				}
 			},
 			{
-				label: "Light Parameters",
-				onSelect: () -> {
-					for (s in [
-						topMaskR,
-						topMaskG,
-						topMaskB,
-						topMaskA,
-						spriteColR,
-						spriteColG,
-						spriteColB,
-						spriteColA,
-						lightColR,
-						lightColG,
-						lightColB,
-						lightColA,
-						lightnalge,
-						lightSize,
-						numOfLay,
-						laySepa
-					])
-						if (s != null) {
-							s.visible = false;
-							s.active = false;
-						}
-					for (s in [lightnalge, lightSize, numOfLay, laySepa])
-						if (s != null) {
-							s.visible = true;
-							s.active = true;
-						}
-				}
-			}
+    label: "Light Parameters",
+    onSelect: () -> {
+        for (s in [
+            topMaskR,
+            topMaskG,
+            topMaskB,
+            topMaskA,
+            spriteColR,
+            spriteColG,
+            spriteColB,
+            spriteColA,
+            lightColR,
+            lightColG,
+            lightColB,
+            lightColA,
+            lightnalge,
+            lightSize,
+            numOfLay,
+            laySepa
+        ])
+            if (s != null) {
+                s.visible = false;
+                s.active = false;
+            }
+
+        for (s in [lightnalge, lightSize, numOfLay, laySepa])
+            if (s != null) {
+                s.visible = true;
+                s.active = true;
+            }
+
+        editinn.text = "Editing Light Parameters";
+    }
+}
+
 		]
 	},
 	{
@@ -351,12 +359,16 @@ function postCreate() {
 	//
 	DiscordUtil.changePresence("Shadeinater V3 (Editor)");
 
-
 	// BG
 	var stge:FlxSprite = new FlxSprite(0, 0);
 	stge.loadGraphic(Paths.image("menuEditors"));
 	stge.camera = FlxG.camera;
 	add(stge);
+
+	editinn = new FunkinText(100, 100, 1000, "Editing Top Mask Color", 40);
+	editinn.alignment = "center";
+	editinn.cameras = FlxG.camera;
+	add(editinn);
 
 	// UP BAR
 	topMenuSpr = new UITopMenu(topMenu);
