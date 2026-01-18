@@ -9,10 +9,10 @@ import funkin.backend.utils.DiscordUtil;
 var index = -1;
 
 function create() {
-    DiscordUtil.changePresence("Shadeinater 2000 (Chossing option)");
+    DiscordUtil.changePresence("Shadeinater V3 (Chossing option)");
 	options.push({
-		name: "Shadeinator 2000",
-        id: "rtxlightning",
+		name: "Shadeinator V3",
+        id: "rtxeditorv3",
         onClick: enter
 	});
 	index = options.length - 1;
