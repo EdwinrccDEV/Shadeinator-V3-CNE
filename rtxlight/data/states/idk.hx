@@ -7,7 +7,7 @@ import sys.FileSystem;
 import sys.io.File;
 import funkin.backend.utils.DiscordUtil;
 
-// VARIABLES
+// Top menu
 var topMenuSpr:UITopMenu;
 
 // slider vars
@@ -27,8 +27,16 @@ var lightnalge:UISlider = null;
 var lightSize:UISlider = null;
 var numOfLay:UISlider = null;
 var laySepa:UISlider = null;
+
+//Other
 var bff:FlxSprite = null;
 var editinn = null;
+var slide1 = null;
+var slide2 = null;
+var slide3 = null;
+var slide4 = null;
+var flecha:FlxSprite;
+var distcn = null;
 
 // Shader Variables
 var shaderParms = {
@@ -61,6 +69,10 @@ var topMenu = [
 			{
 				label: "Leave",
 				onSelect: () -> FlxG.switchState(new EditorTreeMenu(null, true, "no"))
+			},
+			{
+				label: "Reload State",
+				onSelect: () -> FlxG.switchState(new UIState(true, "idk"))
 			}
 		]
 	},
@@ -70,6 +82,8 @@ var topMenu = [
 			{label: "Load shader", onSelect: () -> trace("hi")},
 			{label: "Import from", onSelect: () -> trace("hi")},
 			{label: "Save shader as", onSelect: () -> trace("hi")},
+			{label: "Delete shader", onSelect: () -> trace("hi")},
+			{label: "View Event Parameters", onSelect: () -> trace("hi")},
 			{
 				label: "Make script",
 				onSelect: () -> {
@@ -98,9 +112,10 @@ var topMenu = [
 					contenido += "}\n";
 					// Guardar archivo
 					File.saveContent("addons/rtxlight/values/" + nombre + ".hx", contenido);
-					//trace("Script generado y guardado en addons/rtxlight/values/" + nombre + ".hx");
+					// trace("Script generado y guardado en addons/rtxlight/values/" + nombre + ".hx");
 				}
-			}
+			},
+			{label: "Export Spritesheet with shader", onSelect: () -> trace("hi")}
 		]
 	},
 	{
@@ -154,7 +169,11 @@ var topMenu = [
 							s.visible = true;
 							s.active = true;
 						}
-						editinn.text = "Editing Top Mask Color";
+					editinn.text = "Editing Top Mask Color";
+					slide1.text = "Alpha";
+					slide2.text = "Red";
+					slide3.text = "Green";
+					slide4.text = "Blue";
 				}
 			},
 			{
@@ -187,7 +206,11 @@ var topMenu = [
 							s.visible = true;
 							s.active = true;
 						}
-						editinn.text = "Editing Sprite Color";
+					editinn.text = "Editing Sprite Color";
+					slide1.text = "Alpha";
+					slide2.text = "Red";
+					slide3.text = "Green";
+					slide4.text = "Blue";
 				}
 			},
 			{
@@ -220,45 +243,50 @@ var topMenu = [
 							s.visible = true;
 							s.active = true;
 						}
-						editinn.text = "Editing Light Color";
+					editinn.text = "Editing Light Color";
+					slide1.text = "Alpha";
+					slide2.text = "Red";
+					slide3.text = "Green";
+					slide4.text = "Blue";
 				}
 			},
 			{
-    label: "Light Parameters",
-    onSelect: () -> {
-        for (s in [
-            topMaskR,
-            topMaskG,
-            topMaskB,
-            topMaskA,
-            spriteColR,
-            spriteColG,
-            spriteColB,
-            spriteColA,
-            lightColR,
-            lightColG,
-            lightColB,
-            lightColA,
-            lightnalge,
-            lightSize,
-            numOfLay,
-            laySepa
-        ])
-            if (s != null) {
-                s.visible = false;
-                s.active = false;
-            }
-
-        for (s in [lightnalge, lightSize, numOfLay, laySepa])
-            if (s != null) {
-                s.visible = true;
-                s.active = true;
-            }
-
-        editinn.text = "Editing Light Parameters";
-    }
-}
-
+				label: "Light Parameters",
+				onSelect: () -> {
+					for (s in [
+						topMaskR,
+						topMaskG,
+						topMaskB,
+						topMaskA,
+						spriteColR,
+						spriteColG,
+						spriteColB,
+						spriteColA,
+						lightColR,
+						lightColG,
+						lightColB,
+						lightColA,
+						lightnalge,
+						lightSize,
+						numOfLay,
+						laySepa
+					])
+						if (s != null) {
+							s.visible = false;
+							s.active = false;
+						}
+					for (s in [lightnalge, lightSize, numOfLay, laySepa])
+						if (s != null) {
+							s.visible = true;
+							s.active = true;
+						}
+					editinn.text = "Light Parameters";
+					slide1.text = "Angle";
+					slide2.text = "Size";
+					slide3.text = "Layer Count";
+					slide4.text = "Layer Spacing";
+				}
+			}
 		]
 	},
 	{
@@ -315,7 +343,6 @@ var topMenu = [
 			{
 				label: "Reset ALL",
 				onSelect: () -> {
-					// Top Mask
 					var campos = [
 						  "mask_Color_R",   "mask_Color_G",     "mask_Color_B",   "mask_Color_A",
 						"sprite_Color_R", "sprite_Color_G",   "sprite_Color_B", "sprite_Color_A",
@@ -355,7 +382,6 @@ function makeUISlider(x:Float, y:Float, width:Int, value:Float, min:Float, max:F
 // POST CREATE
 //
 function postCreate() {
-
 	//
 	DiscordUtil.changePresence("Shadeinater V3 (Editor)");
 
@@ -365,15 +391,22 @@ function postCreate() {
 	stge.camera = FlxG.camera;
 	add(stge);
 
-	editinn = new FunkinText(100, 100, 1000, "Editing Top Mask Color", 40);
-	editinn.alignment = "center";
-	editinn.cameras = FlxG.camera;
-	add(editinn);
-
 	// UP BAR
 	topMenuSpr = new UITopMenu(topMenu);
 	topMenuSpr.cameras = FlxG.camera;
 	add(topMenuSpr);
+
+	flecha = new FlxSprite(-100, -600);
+	flecha.loadGraphic("images/arrow.png");
+	add(flecha);
+	flecha.scale.set(0.1, 0.1);
+	flecha.camera = FlxG.camera;
+	flecha.alpha = 1;
+
+	distcn = new FunkinText(425, 400, 1000, "0.0", 40);
+	distcn.alignment = "center";
+	distcn.cameras = FlxG.camera;
+	add(distcn);
 
 	// CHARACTER
 	bff = new FlxSprite(700, 200);
@@ -389,32 +422,58 @@ function postCreate() {
 	bff.shader.layernumbers = 5;
 	bff.shader.layerseparation = 1;
 
+	editinn = new FunkinText(100, 100, 1000, "Editing Top Mask Color", 40);
+	editinn.alignment = "center";
+	editinn.cameras = FlxG.camera;
+	add(editinn);
+
+
+	slide1 = new FunkinText(100, 165, 100, "Alpha", 30);
+	slide1.alignment = "left";
+	slide1.cameras = FlxG.camera;
+	add(slide1);
+
+	slide2 = new FunkinText(100, 265, 100, "Red", 30);
+	slide2.alignment = "left";
+	slide2.cameras = FlxG.camera;
+	add(slide2);
+
+	slide3 = new FunkinText(100, 365, 300, "Green", 30);
+	slide3.alignment = "left";
+	slide3.cameras = FlxG.camera;
+	add(slide3);
+
+	slide4 = new FunkinText(100, 465, 300, "Blue", 30);
+	slide4.alignment = "left";
+	slide4.cameras = FlxG.camera;
+	add(slide4);
+
 	//
 	// x, y, width, value, min, max, onChange, centered
 	//
 	// TOP MASK COLOR SLIDERS
-	topMaskA = makeUISlider(100, 200, 350, 0, -1, 1, function(val:Float) {
+	topMaskA = makeUISlider(100, 200, 450, 0, -1, 1, function(val:Float) {
 		shaderParms.mask_Color_A = val;
 	});
 	topMaskA.camera = FlxG.camera;
 	add(topMaskA);
 	topMaskA.visible = true;
 	//
-	topMaskR = makeUISlider(100, 300, 350, 0, 0, 1, function(val:Float) {
+	topMaskR = makeUISlider(100, 300, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.mask_Color_R = val;
 	});
 	topMaskR.camera = FlxG.camera;
 	add(topMaskR);
 	topMaskR.visible = true;
 	//
-	topMaskG = makeUISlider(100, 400, 350, 0, 0, 1, function(val:Float) {
+	topMaskG = makeUISlider(100, 400, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.mask_Color_G = val;
 	});
 	topMaskG.camera = FlxG.camera;
 	add(topMaskG);
 	topMaskG.visible = true;
 	//
-	topMaskB = makeUISlider(100, 500, 350, 0, 0, 1, function(val:Float) {
+	topMaskB = makeUISlider(100, 500, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.mask_Color_B = val;
 	});
 	topMaskB.camera = FlxG.camera;
@@ -423,28 +482,28 @@ function postCreate() {
 	//
 	//
 	//
-	spriteColA = makeUISlider(100, 200, 350, 0, -1, 1, function(val:Float) {
+	spriteColA = makeUISlider(100, 200, 450, 0, -1, 1, function(val:Float) {
 		shaderParms.sprite_Color_A = val;
 	});
 	spriteColA.camera = FlxG.camera;
 	add(spriteColA);
 	spriteColA.visible = false;
 	//
-	spriteColR = makeUISlider(100, 300, 350, 0, 0, 1, function(val:Float) {
+	spriteColR = makeUISlider(100, 300, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.sprite_Color_R = val;
 	});
 	spriteColR.camera = FlxG.camera;
 	add(spriteColR);
 	spriteColR.visible = false;
 	//
-	spriteColG = makeUISlider(100, 400, 350, 0, 0, 1, function(val:Float) {
+	spriteColG = makeUISlider(100, 400, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.sprite_Color_G = val;
 	});
 	spriteColG.camera = FlxG.camera;
 	add(spriteColG);
 	spriteColG.visible = false;
 	//
-	spriteColB = makeUISlider(100, 500, 350, 0, 0, 1, function(val:Float) {
+	spriteColB = makeUISlider(100, 500, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.sprite_Color_B = val;
 	});
 	spriteColB.camera = FlxG.camera;
@@ -454,28 +513,28 @@ function postCreate() {
 	//
 	//
 	//
-	lightColA = makeUISlider(100, 200, 350, 0, -1, 1, function(val:Float) {
+	lightColA = makeUISlider(100, 200, 450, 0, -1, 1, function(val:Float) {
 		shaderParms.light_Color_A = val;
 	});
 	lightColA.camera = FlxG.camera;
 	add(lightColA);
 	lightColA.visible = false;
 	//
-	lightColR = makeUISlider(100, 300, 350, 0, 0, 1, function(val:Float) {
+	lightColR = makeUISlider(100, 300, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.light_Color_R = val;
 	});
 	lightColR.camera = FlxG.camera;
 	add(lightColR);
 	lightColR.visible = false;
 	//
-	lightColG = makeUISlider(100, 400, 350, 0, 0, 1, function(val:Float) {
+	lightColG = makeUISlider(100, 400, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.light_Color_G = val;
 	});
 	lightColG.camera = FlxG.camera;
 	add(lightColG);
 	lightColG.visible = false;
 	//
-	lightColB = makeUISlider(100, 500, 350, 0, 0, 1, function(val:Float) {
+	lightColB = makeUISlider(100, 500, 450, 0, 0, 1, function(val:Float) {
 		shaderParms.light_Color_B = val;
 	});
 	lightColB.camera = FlxG.camera;
@@ -485,28 +544,28 @@ function postCreate() {
 	//
 	//
 
-	lightnalge = makeUISlider(100, 200, 350, 0, 0, 360, function(val:Float) {
+	lightnalge = makeUISlider(100, 200, 450, 0, 0, 360, function(val:Float) {
 		shaderParms.light_Angle = val;
 	});
 	lightnalge.camera = FlxG.camera;
 	add(lightnalge);
 	lightnalge.visible = false;
 
-	lightSize = makeUISlider(100, 300, 350, 0, 0, 100, function(val:Float) {
+	lightSize = makeUISlider(100, 300, 450, 0, 0, 100, function(val:Float) {
 		shaderParms.light_Size = val;
 	});
 	lightSize.camera = FlxG.camera;
 	add(lightSize);
 	lightSize.visible = false;
 
-	numOfLay = makeUISlider(100, 400, 350, 0, 0, 100, function(val:Float) {
+	numOfLay = makeUISlider(100, 400, 450, 0, 0, 100, function(val:Float) {
 		shaderParms.number_Of_Layers = val;
 	});
 	numOfLay.camera = FlxG.camera;
 	add(numOfLay);
 	numOfLay.visible = false;
 
-	laySepa = makeUISlider(100, 500, 350, 0, 0, 100, function(val:Float) {
+	laySepa = makeUISlider(100, 500, 450, 0, 0, 100, function(val:Float) {
 		shaderParms.layer_Separation = val;
 	});
 	laySepa.camera = FlxG.camera;
@@ -538,6 +597,18 @@ function loadCharacter(charKey:String, index:Int) {
 // POST UPDATE
 //
 function postUpdate(elapsed:Float):Void {
+	
+	var fx = flecha.x + flecha.width * 0.5;
+	var fy = flecha.y + flecha.height * 0.5;
+	var bx = bff.x + bff.width * 0.5;
+	var by = bff.y + bff.height * 0.5;
+	var dx = bx - fx;
+	var dy = by - fy;
+	flecha.angle = Math.atan2(dy, dx) * 180 / Math.PI;
+	distcn.text = Math.ceil(Math.sqrt(dx * dx + dy * dy));
+
+
+
 	// Aply and uptade the shader
 	bff.shader.overlayColor = [
 		shaderParms.mask_Color_R,
