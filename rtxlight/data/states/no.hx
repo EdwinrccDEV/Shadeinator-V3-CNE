@@ -6,8 +6,8 @@ import funkin.editors.ui.UIWarningSubstate;
 
 var num = 0;
 var texts:Array<Array<String>> = [
-    ["Editor","Enter to the editor","Guide","How to use the editor","Saved shaders","Open the saved shaders folder","Things for this tool","In Progress","The guide is still in progress.\nPlease wait for more updates.\n\n- Edwin","Backups","Open the backups folder"],
-    ["Editor","Entrar al editor","Guía","Cómo usar el editor","Shaders guardados","Abrir la carpeta de shaders guardados","Herramientas para esta utilidad","En progreso","La guía aún está en desarrollo.\nPor favor espera más actualizaciones.\n\n- Edwin","Copias de seguridad","Abre la carpeta de copias de seguridad"]
+    ["Editor","Enter to the editor","Guide","How to use the editor","Saved shaders","Open the saved shaders folder","Things for this tool","In Progress","The guide is still in progress.\nPlease wait for more updates.\n\n- Edwin","Backups","Open the backups folder","CNE Server","Go to the CNE discord server"],
+    ["Editor","Entrar al editor","Guía","Cómo usar el editor","Shaders guardados","Abrir la carpeta de shaders guardados","Herramientas para esta utilidad","En progreso","La guía aún está en desarrollo.\nPor favor espera más actualizaciones.\n\n- Edwin","Copias de seguridad","Abre la carpeta de copias de seguridad","Servidor de CNE","Ve al servidor de discord de CNE"]
 
 ];
 
@@ -32,6 +32,9 @@ function create() {
         }),
         new TextOption(texts[num][9], texts[num][10], ' >', () -> {
             Sys.command('explorer', ["addons\\rtxlight\\backups\\"]);
+        }),
+        new TextOption(texts[num][11], texts[num][12], ' >', () -> {
+            CoolUtil.openURL('https://discord.gg/NqT8mau5VR');
         })
     ];
         
