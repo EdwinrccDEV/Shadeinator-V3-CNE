@@ -6,6 +6,9 @@ import funkin.editors.EditorTreeMenu;
 import sys.FileSystem;
 import sys.io.File;
 import funkin.backend.utils.DiscordUtil;
+import funkin.editors.ui.UIFileExplorer;
+import openfl.display.BitmapData;
+import openfl.display.Bitmap;
 
 // Top menu
 var topMenuSpr:UITopMenu;
@@ -37,6 +40,7 @@ var slide3 = null;
 var slide4 = null;
 var flecha:FlxSprite;
 var distcn = null;
+var verde = null;
 
 // Shader Variables
 var shaderParms = {
@@ -132,8 +136,8 @@ var topMenu = [
 	{
 		label: "HUD",
 		childs: [
-			{label: "Hide HUD", onSelect: () -> trace("hi")},
-			{label: "Show HUD", onSelect: () -> trace("hi")}
+			{label: "Hide HUD", onSelect: () -> verde.alpha = 1},
+			{label: "Show HUD", onSelect: () -> verde.alpha = 0}
 		]
 	},
 	{
@@ -384,6 +388,9 @@ function makeUISlider(x:Float, y:Float, width:Int, value:Float, min:Float, max:F
 function postCreate() {
 	//
 	DiscordUtil.changePresence("Shadeinater V3 (Editor)");
+ 	FlxG.sound.play(Paths.sound("music"), 2, true);
+
+
 
 	// BG
 	var stge:FlxSprite = new FlxSprite(0, 0);
@@ -391,42 +398,23 @@ function postCreate() {
 	stge.camera = FlxG.camera;
 	add(stge);
 
-	// UP BAR
-	topMenuSpr = new UITopMenu(topMenu);
-	topMenuSpr.cameras = FlxG.camera;
-	add(topMenuSpr);
-
 	flecha = new FlxSprite(-100, -600);
 	flecha.loadGraphic("images/arrow.png");
 	add(flecha);
 	flecha.scale.set(0.1, 0.1);
 	flecha.camera = FlxG.camera;
-	flecha.alpha = 1;
+	flecha.alpha = 0.5;
 
 	distcn = new FunkinText(425, 400, 1000, "0.0", 40);
 	distcn.alignment = "center";
 	distcn.cameras = FlxG.camera;
+	distcn.alpha = 0.5;
 	add(distcn);
-
-	// CHARACTER
-	bff = new FlxSprite(700, 200);
-	bff.camera = FlxG.camera;
-	add(bff);
-	loadCharacter("bf", 0);
-	bff.shader = new CustomShader("RTXLighting");
-	bff.shader.overlayColor = [0, 0, 0, 0];
-	bff.shader.satinColor = [0, 0, 0, 0];
-	bff.shader.innerShadowColor = [1, 0, 0, 1];
-	bff.shader.innerShadowAngle = (shaderParms.nalge - 90) * Math.PI / 180;
-	bff.shader.innerShadowDistance = 10;
-	bff.shader.layernumbers = 5;
-	bff.shader.layerseparation = 1;
 
 	editinn = new FunkinText(100, 100, 1000, "Editing Top Mask Color", 40);
 	editinn.alignment = "center";
 	editinn.cameras = FlxG.camera;
 	add(editinn);
-
 
 	slide1 = new FunkinText(100, 165, 100, "Alpha", 30);
 	slide1.alignment = "left";
@@ -447,7 +435,11 @@ function postCreate() {
 	slide4.alignment = "left";
 	slide4.cameras = FlxG.camera;
 	add(slide4);
+	
 
+	//
+	//
+	//
 	//
 	// x, y, width, value, min, max, onChange, centered
 	//
@@ -571,6 +563,34 @@ function postCreate() {
 	laySepa.camera = FlxG.camera;
 	add(laySepa);
 	laySepa.visible = false;
+
+
+	verde = new FlxSprite(0, 0);
+	verde.loadGraphic("images/qwertyuiop.png");
+	add(verde);
+	verde.scale.set(5, 5);
+	verde.camera = FlxG.camera;
+	verde.alpha = 0;
+
+	// CHARACTER
+	bff = new FlxSprite(700, 200);
+	bff.camera = FlxG.camera;
+	add(bff);
+	loadCharacter("bf", 0);
+	bff.shader = new CustomShader("RTXLighting");
+	bff.shader.overlayColor = [0, 0, 0, 0];
+	bff.shader.satinColor = [0, 0, 0, 0];
+	bff.shader.innerShadowColor = [1, 0, 0, 1];
+	bff.shader.innerShadowAngle = (shaderParms.nalge - 90) * Math.PI / 180;
+	bff.shader.innerShadowDistance = 10;
+	bff.shader.layernumbers = 5;
+	bff.shader.layerseparation = 1;
+
+	topMenuSpr = new UITopMenu(topMenu);
+	topMenuSpr.cameras = FlxG.camera;
+	add(topMenuSpr);
+
+
 }
 
 //
