@@ -1,24 +1,25 @@
-<menu name="RTX Editor (Addon)" desc="Small tweaks and quality-of-life options (more coming soon!)">
+<menu name="Shdeinator (addon)" desc="Quality-of-life tweaks for the editor">
+    <checkbox id="nobgmus" name="Disable BG Music" desc="Mute background music"/>
+    <number id="volum" name="Music Volume" min="0.5" max="2" change="0.05" desc="Background music volume level"/>
 
-  <checkbox id="don" name="Disable startup note" desc="Prevents the intro note from opening when the editor starts."/>
+    <choice id="bgsong" name="Music" desc="Select background track">
+        <value name="Track 1" value="1"/>
+        <value name="Track 2" value="2"/>
+        <value name="Track 3" value="3"/>
+        <value name="Track 4" value="4"/>
+        <value name="Track 5" value="5"/>
+        <value name="Track 6" value="6"/>
+        <value name="Track 7" value="7"/>
+    </choice>
 
-  <checkbox id="wn" name="Disable exit warning" desc="Removes the confirmation alert shown when exiting the editor."/>
+    <checkbox id="livepre" name="Live Preview" desc="Real-time shader preview during playback"/>
+    <checkbox id="enaslide" name="Enable Slide" desc="Character slides after movement"/>
+    <slider id="slide" name="Slide Amount" min="0.1" max="10" change="5" desc="Character slide distance" segments="10" barWidth="500" />
+    <checkbox id="whrsbf" name="where is bf?" desc="Show a arrow that point at bf"/>
 
-  <checkbox id="dros" name="Disable reload on save" desc="Stops the editor from reloading when saving a new shader. (Note: You’ll still need to reload the editor to see the shader in the dropdown.)"/>
-
-  <number id="numr" name="Reload delay" min="1" max="10" change="1" desc="Time in seconds before the editor reloads after saving a new shader."/>
-
-  <slider id="slide" name="Movement slide" min="0.1" max="10" change="4" desc="Controls how much the character slides after moving." segments="10" barWidth="500" />
-
-  <checkbox id="advc" name="Thank you (may lag)" desc="Enables a thank-you message that could cause minor performance drops."/>
-
-  <checkbox id="autos" name="Autosave" desc="Automatically creates backup copies in the background to prevent data loss."/>
-
-  <number id="autott" name="Autosave interval" min="1" max="5" change="1" desc="Time in minutes between each automatic backup save."/>
-
-  <choice id="langs" name="Language" desc="Editor language selection">
-    <value name="English" value="eng"/>
-    <value name="Español" value="esp"/>
-  </choice>
+    <choice id="langs" name="Language" desc="Interface language">
+        <value name="English" value="eng"/>
+        <value name="Español" value="esp"/>
+    </choice>
 
 </menu>

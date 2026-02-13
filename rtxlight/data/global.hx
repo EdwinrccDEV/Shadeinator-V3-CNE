@@ -1,9 +1,8 @@
-FlxG.save.data.don;
-FlxG.save.data.wn;
-FlxG.save.data.dros;
-FlxG.save.data.numr;
-FlxG.save.data.advc;
 FlxG.save.data.slide;
 FlxG.save.data.langs;
-FlxG.save.data.autos;
-FlxG.save.data.autott;
+FlxG.save.data.enaslide;
+FlxG.save.data.livepre;
+FlxG.save.data.volum;
+FlxG.save.data.bgsong;
+FlxG.save.data.nobgmus;
+FlxG.save.data.whrsbf;
