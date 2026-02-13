@@ -1,4 +1,4 @@
-<menu name="Shdeinator (addon)" desc="Quality-of-life tweaks for the editor">
+<menu name="Shadeinator (addon)" desc="Quality-of-life tweaks for the editor">
     <checkbox id="nobgmus" name="Disable BG Music" desc="Mute background music"/>
     <number id="volum" name="Music Volume" min="0.5" max="2" change="0.05" desc="Background music volume level"/>
 
@@ -21,5 +21,6 @@
         <value name="English" value="eng"/>
         <value name="Español" value="esp"/>
     </choice>
+
 
 </menu>
