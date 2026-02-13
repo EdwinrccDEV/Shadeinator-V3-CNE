@@ -1,5 +1,5 @@
-# Shadeinator-V3-CNE [ IN PROGRESS! USELESS RIGHT NOW ]
+# Shadeinator-V3-CNE 
 
 - ## A shader tool for CNE
 - ## Free to use just give credits
-- ## V2 -> https://gamebanana.com/tools/20845
+- ## DOWNLOAD -> https://gamebanana.com/tools/20845
