@@ -74,21 +74,24 @@ inline function applyShader(
     layers:Int,
     separation:Int
 ) {
+    if (char.animateAtlas != null) {
+        char.useRenderTexture = true;
+    }
+
     char.shader = new CustomShader("RTXLighting");
     char.shader.overlayColor = overlay;
     char.shader.satinColor = satin;
     char.shader.innerShadowColor = light;
 
-var fixedAngle = (angle - char.angle);
+    var fixedAngle = (angle - char.angle);
 
-if (char.flipX)
-    fixedAngle = 360 - fixedAngle;
+    if (char.flipX)
+        fixedAngle = 360 - fixedAngle;
 
-if (char.flipY)
-    fixedAngle = 180 - fixedAngle;
+    if (char.flipY)
+        fixedAngle = 180 - fixedAngle;
 
-char.shader.innerShadowAngle = (fixedAngle - 90) * Math.PI / 180;
-
+    char.shader.innerShadowAngle = (fixedAngle - 90) * Math.PI / 180;
 
     char.shader.innerShadowDistance = distance;
     char.shader.layernumbers = layers;

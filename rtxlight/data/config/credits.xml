@@ -1,0 +1,4 @@
+<menu name="Shadeinator" desc="People of this Tool">
+	<credit name="Edwin" desc="Main Coder" icon="edwin" size="130" portrait="false" color="#00ffbf" url=""/>
+	<credit name="Jarret" desc="He fixed the music bug in Linux" icon="jarra" size="130" portrait="false" color="#b300ff" url=""/>
+</menu>

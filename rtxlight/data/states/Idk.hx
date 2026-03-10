@@ -12,9 +12,12 @@ import openfl.display.Bitmap;
 import funkin.editors.ui.UISubstateWindow;
 import funkin.editors.ui.notifications.UIBaseNotification;
 import StringTools;
-import Sys;
 import flixel.input.keyboard.FlxKey;
 import Reflect;
+import funkin.backend.utils.WindowUtils;
+import funkin.backend.utils.NativeAPI;
+import haxe.ds.StringTools;
+
 
 // Top menu
 var topMenuSpr:UITopMenu;
@@ -38,7 +41,7 @@ var numOfLay:UISlider = null;
 var laySepa:UISlider = null;
 
 // Other
-var bff:FlxSprite = null;
+var bff = new FunkinSprite();
 var editinn = null;
 var slide1 = null;
 var slide2 = null;
@@ -57,6 +60,7 @@ var waitingForDelete:Bool = false;
 var waitingForScript:Bool = false;
 var resetkey = "R";
 var editkey = "E";
+//var transWindow = NdllUtil.getFunction("ndllexample", "ndllexample_set_windows_transparent", 4);
 
 // Shader Variables
 var shaderParms = {
@@ -89,13 +93,15 @@ function makescript(strums:Array<Int>, chars:Array<Int>, file:String) {
 	var round = true;
 	var val = (v:Float) -> if (round) Math.round(v * 100) / 100 else v;
 	var contenido = "";
-
 	contenido += "var strums = [" + strums.join(", ") + "];\n";
 	contenido += "var chars = [" + chars.join(", ") + "];\n\n";
-
 	contenido += "function postCreate() {\n";
 	contenido += "\tfor (i in 0...strums.length) {\n";
 	contenido += "\t\tvar sprite = strumLines.members[strums[i]].characters[chars[i]];\n";
+	contenido += "\t\t\n";
+	contenido += "\t\tif (sprite.animateAtlas != null) {\n";
+	contenido += "\t\t\tsprite.useRenderTexture = true;\n";
+	contenido += "\t\t}\n";
 	contenido += "\t\t\n";
 	contenido += "\t\tsprite.shader = new CustomShader(\"RTXLighting\");\n";
 	contenido += "\t\tsprite.shader.overlayColor = [" + val(shaderParms.mask_Color_R) + ", " + val(shaderParms.mask_Color_G) + ", "
@@ -116,7 +122,46 @@ function makescript(strums:Array<Int>, chars:Array<Int>, file:String) {
 	contenido += "\t}\n";
 	contenido += "}\n";
 
-	File.saveContent("addons/rtxlight/scripts maked/" + file + ".hx", contenido);
+	File.saveContent("addons/rtxlight/scriptsMaked/" + file + ".hx", contenido);
+}
+
+function makePsychScript(rtxCode:String, file:String = "") {
+	var nombre = "psychRTX_script";
+	var fileName = file;
+	
+	if (fileName == "") {
+		var randomNum = Std.random(999999);
+		fileName = "psychRTX_" + randomNum;
+	}
+	
+	var contenido = "";
+	contenido += "local rtxCode = \"" + rtxCode + "\"\n\n";
+	contenido += "function applyShaderFromString(spriteTag, str)\n";
+	contenido += "\tlocal nums = {}\n\n";
+	contenido += "\tfor n in string.gmatch(str, \"([^,%s]+)\") do\n";
+	contenido += "\t\ttable.insert(nums, tonumber(n))\n";
+	contenido += "\tend\n\n";
+	contenido += "\tsetSpriteShader(spriteTag, \"RTXLighting\")\n\n";
+	contenido += "\tsetShaderFloatArray(spriteTag, \"overlayColor\",\n";
+	contenido += "\t\t{nums[1], nums[2], nums[3], nums[4]})\n\n";
+	contenido += "\tsetShaderFloatArray(spriteTag, \"satinColor\",\n";
+	contenido += "\t\t{nums[5], nums[6], nums[7], nums[8]})\n\n";
+	contenido += "\tsetShaderFloatArray(spriteTag, \"innerShadowColor\",\n";
+	contenido += "\t\t{nums[9], nums[10], nums[11], nums[12]})\n\n";
+	contenido += "\tlocal angle = nums[13]\n\n";
+	contenido += "\tsetShaderFloat(spriteTag, \"innerShadowAngle\",\n";
+	contenido += "\t\t(angle - 90) * math.pi / 180)\n\n";
+	contenido += "\tsetShaderFloat(spriteTag, \"innerShadowDistance\", nums[14])\n";
+	contenido += "\tsetShaderFloat(spriteTag, \"layernumbers\", nums[15])\n";
+	contenido += "\tsetShaderFloat(spriteTag, \"layerseparation\", nums[16])\n";
+	contenido += "end\n\n\n";
+	contenido += "function onCreatePost()\n\n";
+	contenido += "\tapplyShaderFromString(\"boyfriend\", rtxCode)\n";
+	contenido += "\tapplyShaderFromString(\"dad\", rtxCode)\n";
+	contenido += "\tapplyShaderFromString(\"gf\", rtxCode)\n\n";
+	contenido += "end\n";
+	
+	File.saveContent("addons/rtxlight/scriptsMaked/" + fileName + ".lua", contenido);
 }
 
 function resetFields(campos:Array<String>, sliders:Array<Dynamic>):Void {
@@ -224,6 +269,7 @@ var topMenu = [
 				onSelect: () -> {
 					File.saveContent("addons/rtxlight/other/rembem.txt", codenumber);
 					FlxG.switchState(new EditorTreeMenu(null, true, "no"));
+					WindowUtils.setWindow("Friday Night Funkin' - Codename Engine", "logo");
 				}
 			},
 			null,
@@ -283,7 +329,7 @@ var topMenu = [
 					waitingForDelete = true;
 				}
 			},
-						{
+			{
 				label: "Make script",
 				onSelect: () -> {
 					subscript = new UISubstateWindow(true, 'makeScr');
@@ -293,27 +339,45 @@ var topMenu = [
 					FlxG.state.openSubState(subscript);
 					waitingForScript = true;
 				}
-			},
+			},null,
+			{label: "Make Psych script", onSelect: () -> makePsychScript(codenumber,"psychRTX_" + Std.random(999999))},
+			{label: "Make Vslice script (SOON)", onSelect: () -> trace("hi")},
 			null,
 			{label: "Event Parameters (USE SCRIPT AND CODE EVENT)", onSelect: () -> trace("hi")},
-			{label: "Export Spritesheet with shader (JOKE)", onSelect: () -> trace("hi")}
+			{label: "Export Spritesheet with shader (BETA)", onSelect: () -> trace("hi")}
 		]
 	},
 	{
 		label: "Character",
 		childs: [
-			{label: "BF", onSelect: () -> loadCharacter("bf", 0)},
-			{label: "Dad", onSelect: () -> loadCharacter("Dad", 1)},
-			{label: "Spooky Kids", onSelect: () -> loadCharacter("Spooky Kids", 2)},
-			{label: "Pico", onSelect: () -> loadCharacter("Pico", 3)},
-			{label: "Mom", onSelect: () -> loadCharacter("Mom", 4)},
-			{label: "Tankman", onSelect: () -> loadCharacter("Tankman", 5)}
+			{label: "BF", onSelect: () -> loadCharacter("bf", 0, 16, 1)},
+			{label: "Dad", onSelect: () -> loadCharacter("Dad", 1, 16, 0.75)},
+			{label: "Spooky Kids", onSelect: () -> loadCharacter("Spooky Kids", 2, 16, 1)},
+			{label: "Pico", onSelect: () -> loadCharacter("Pico", 3, 16,1 )},
+			{label: "Mom", onSelect: () -> loadCharacter("Mom", 4, 16, 0.75)},
+			{label: "Tankman", onSelect: () -> loadCharacter("Tankman", 5, 16, 0.9)},null,
+			{label: "Caros", onSelect: () -> loadCharacter("Caros", 6, 7, 0.75)},
+			{label: "Mart", onSelect: () -> loadCharacter("Mart", 7, 16, 0.9)},
+			{label: "Molly", onSelect: () -> loadCharacter("Molly", 8, 9, 0.75)},
+			{label: "King", onSelect: () -> loadCharacter("king", 9, 16, 0.6)},
+			{label: "Abelito", onSelect: () -> loadCharacter("abelito", 10, 4, 0.6)},
+			{label: "Thaggy", onSelect: () -> loadCharacter("thaggy", 11, 20, 0.8)},
+			{label: "Bfmp4xd", onSelect: () -> loadCharacter("BfMp4", 12, 10, 1)}
 		]
 	},
 	{
 		label: "HUD",
 		childs: [
-			{label: "Hide HUD", onSelect: () -> verde.alpha = 1},
+{
+    label: "Hide HUD",
+    onSelect: () -> {
+        verde.alpha = 1;
+		new FlxTimer().start(1, function(timer:FlxTimer){
+        //transWindow(true, 14, 255, 0);
+		});
+    }
+}
+,
 			{label: "Show HUD", onSelect: () -> verde.alpha = 0}
 		]
 	},
@@ -418,18 +482,44 @@ function recoverdata() {
 	shaderParms.layer_Separation = raw[15];
 }
 
+function create(){
+	DiscordUtil.changePresence("Shadeinater V3 (Editor)");
+}
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // POST CREATE
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 function postCreate() {
 	// stuff
 	DiscordUtil.changePresence("Shadeinater V3 (Editor)");
+	WindowUtils.setWindow("CNE Shadeintor", "icons");
+	NativeAPI.setWindowBorderColor("CNE Shadeintor", FlxColor.TRANSPARENT, true, true);
 
+	/*
 	if (!FlxG.save.data.nobgmus) {
-		FlxG.sound.playMusic(Paths.sound("music" + FlxG.save.data.bgsong), Std.parseFloat(FlxG.save.data.volum), true);
+		// FlxG.sound.playMusic(Paths.sound("music" + FlxG.save.data.bgsong), Std.parseFloat(FlxG.save.data.volum), true);
 	}
+		*/
+		// `bgsong` guarda "1..7" desde options.xml. Si viene null/"" usamos random.
+		var menuMusicN:Int = FlxG.random.int(1, 7);
+		var selectedSong:String = Std.string(FlxG.save.data.bgsong);
+		if (selectedSong == null || selectedSong == "" || selectedSong == "null") {
+			selectedSong = Std.string(menuMusicN);
+			FlxG.save.data.bgsong = selectedSong;
+		}
+		var musicMenu:String = "music" + selectedSong;
+
+		if (!FlxG.save.data.nobgmus) {
+			var musicVol:Float = Std.parseFloat(Std.string(FlxG.save.data.volum));
+			if (Math.isNaN(musicVol)) musicVol = 1;
+			FlxG.sound.playMusic(Paths.sound(musicMenu), musicVol, true);
+		}
+		// trace("music a sonar: " + musicMenu);
+		// trace("bgsong guardado: " + FlxG.save.data.bgsong);
 
 	// BG
 	var stge:FlxSprite = new FlxSprite(0, 0);
@@ -452,6 +542,13 @@ function postCreate() {
 		distcn.cameras = FlxG.camera;
 		distcn.alpha = 0.5;
 		add(distcn);
+	} else {
+		flecha = new FlxSprite(-100, -600);
+		flecha.loadGraphic("images/arrow.png");
+		add(flecha);
+		flecha.scale.set(0.1, 0.1);
+		flecha.camera = FlxG.camera;
+		flecha.alpha = 0;
 	}
 
 	// EDITING TEXT
@@ -621,7 +718,7 @@ function postCreate() {
 	bff = new FlxSprite(700, 200);
 	bff.camera = FlxG.camera;
 	add(bff);
-	loadCharacter("bf", 0);
+	loadCharacter("bf", 0, 16, 1);
 	bff.shader = new CustomShader("RTXLighting");
 	bff.shader.overlayColor = [0, 0, 0, 0];
 	bff.shader.satinColor = [0, 0, 0, 0];
@@ -641,7 +738,7 @@ function postCreate() {
 	credit.cameras = FlxG.camera;
 	add(credit);
 
-	var verga = new FunkinText(730, 685, 1000, "V3.1", 20);
+	var verga = new FunkinText(730, 685, 1000, "V3.4", 20);
 	verga.alignment = "center";
 	verga.cameras = FlxG.camera;
 	add(verga);
@@ -662,26 +759,32 @@ function postCreate() {
 	}
 }
 
-// LOAD CHARACTER
-function loadCharacter(charKey:String, index:Int) {
+function loadCharacter(charKey:String, index:Int, fps:Int, sz:Float) {
 	if (bff == null)
 		return;
-	// LOAD CHAR ANIMS
-	bff.loadGraphic(Paths.image('chars/$index'));
+
 	bff.antialiasing = true;
 	bff.frames = Paths.getSparrowAtlas('chars/' + charKey);
-	bff.animation.addByPrefix('idle', 'idle0', 16, true);
-	bff.animation.addByPrefix('up', 'up0', 16, false);
-	//bff.animation.addByPrefix('hey', 'BF HEY!!0', 1, false);
-	bff.animation.addByPrefix('left', 'left0', 16, false);
-	bff.animation.addByPrefix('down', 'down0', 16, false);
-	bff.animation.addByPrefix('right', 'right0', 16, false);
+
+	bff.animation.addByPrefix('idle', 'idle0', fps, true);
+	bff.animation.addByPrefix('up', 'up0', fps, false);
+	bff.animation.addByPrefix('left', 'left0', fps, false);
+	bff.animation.addByPrefix('down', 'down0', fps, false);
+	bff.animation.addByPrefix('right', 'right0', fps, false);
 	bff.animation.play('idle');
-	if (index == 1 || index == 4)
-		bff.scale.set(0.75, 0.75);
-	else
-		bff.scale.set(1, 1);
+	
+	bff.scale.set(sz, sz);
+	bff.updateHitbox();
+	
+	// USA frameWidth y frameHeight (tamaño del sprite original)
+	var frameOffsetX = (bff.frameWidth / 2) * sz;
+	var frameOffsetY = (bff.frameHeight / 2) * sz;
+	
+	// CENTRA en la flecha con offset fijo
+	bff.x = flecha.x + flecha.width / 2 - frameOffsetX;
+	bff.y = flecha.y + flecha.height / 2 - frameOffsetY;
 }
+
 
 // LOAD PRESET FUNCION
 function loadpresst() {
@@ -734,6 +837,11 @@ function deletepreset() {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function postUpdate(elapsed:Float):Void {
+
+
+
+
+
 	if (FlxG.keys.pressed.R && FlxG.keys.justPressed.ONE) {
 		resetTopMaskColor();
 	}
@@ -877,26 +985,37 @@ function postUpdate(elapsed:Float):Void {
 	bff.shader.layernumbers = shaderParms.number_Of_Layers;
 	bff.shader.layerseparation = shaderParms.layer_Separation;
 
-	// PLAY CHAR ANIMS
-	var animationTimer:FlxTimer = null;
-	function playAnimationWithTimer(animName:String):Void {
-		if (animationTimer != null)
-			animationTimer.cancel();
-		bff.animation.play(animName);
-		animationTimer = new FlxTimer().start(1, function(tmr:FlxTimer) {
-			bff.animation.play('idle');
-			animationTimer = null;
-		});
-	}
+// PLAY CHAR ANIMS
+var animationTimer:FlxTimer = null;
+var lastAnimPlayed:String = '';
 
-	if (FlxG.keys.pressed.A)
-		playAnimationWithTimer('left');
-	else if (FlxG.keys.pressed.S)
-		playAnimationWithTimer('down');
-	else if (FlxG.keys.pressed.D)
-		playAnimationWithTimer('right');
-	else if (FlxG.keys.pressed.W)
-		playAnimationWithTimer('up');
+function playAnimationWithTimer(animName:String):Void {
+	// ✅ No reinicies si ya está sonando esta animación
+	if (lastAnimPlayed == animName && animationTimer != null)
+		return;
+	
+	if (animationTimer != null)
+		animationTimer.cancel();
+	
+	bff.animation.play(animName);
+	lastAnimPlayed = animName;
+	
+	animationTimer = new FlxTimer().start(1, function(tmr:FlxTimer) {
+		bff.animation.play('idle');
+		lastAnimPlayed = 'idle';
+		animationTimer = null;
+	});
+}
+
+// En tu update() o donde cheques inputs
+if (FlxG.keys.justPressed.A)  // ✅ CAMBIA A justPressed
+	playAnimationWithTimer('left');
+else if (FlxG.keys.justPressed.S)
+	playAnimationWithTimer('down');
+else if (FlxG.keys.justPressed.D)
+	playAnimationWithTimer('right');
+else if (FlxG.keys.justPressed.W)
+	playAnimationWithTimer('up');
 	// else if (FlxG.keys.pressed.SPACE)
 	// 	playAnimationWithTimer('hey');
 

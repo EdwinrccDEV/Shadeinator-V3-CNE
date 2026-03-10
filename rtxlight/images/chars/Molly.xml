@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="Molly.png">
+<SubTexture name="idle0000" x="604" y="0" width="320" height="691" frameX="-321" frameY="-215" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="idle0001" x="924" y="0" width="309" height="691" frameX="-328" frameY="-215" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="idle0002" x="300" y="0" width="304" height="698" frameX="-331" frameY="-208" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="idle0003" x="0" y="0" width="300" height="702" frameX="-331" frameY="-203" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="left0000" x="0" y="1376" width="461" height="652" frameX="-178" frameY="-240" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="left0001" x="1671" y="0" width="448" height="657" frameX="-193" frameY="-235" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="down0000" x="816" y="1376" width="364" height="621" frameX="-294" frameY="-282" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="down0001" x="1671" y="657" width="355" height="626" frameX="-297" frameY="-277" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="up0000" x="957" y="702" width="538" height="664" frameX="-266" frameY="-229" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="up0001" x="443" y="702" width="514" height="665" frameX="-266" frameY="-228" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="right0000" x="0" y="702" width="443" height="674" frameX="-336" frameY="-231" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="right0001" x="1233" y="0" width="438" height="675" frameX="-325" frameY="-230" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="miss0000" x="1180" y="1376" width="369" height="614" frameX="-294" frameY="-289" frameWidth="1000" frameHeight="1000" />
+<SubTexture name="miss0001" x="461" y="1376" width="355" height="626" frameX="-297" frameY="-277" frameWidth="1000" frameHeight="1000" />
+</TextureAtlas>

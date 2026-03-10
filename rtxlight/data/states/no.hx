@@ -3,6 +3,7 @@ import funkin.options.TreeMenuScreen;
 import funkin.editors.ui.UIState;
 import Sys;
 import funkin.editors.ui.UIWarningSubstate;
+import funkin.backend.utils.DiscordUtil;
 
 var num = 0;
 var texts:Array<Array<String>> = [
@@ -19,6 +20,7 @@ num = 1;
 
 
 function create() {
+    DiscordUtil.changePresence("Shadeinater V3 (Chossing option)");
     var list = [
         new TextOption(texts[num][0], texts[num][1], ' >', () -> {
             FlxG.switchState(new UIState(true, "Idk"));
@@ -31,7 +33,7 @@ function create() {
             Sys.command('explorer', ["addons\\rtxlight\\values\\"]);
         }),
         new TextOption(texts[num][9], texts[num][10], ' >', () -> {
-            Sys.command('explorer "addons\\rtxlight\\scripts maked\\"');
+            Sys.command('explorer "addons\\rtxlight\\scriptsMaked\\"');
         }),
         new TextOption(texts[num][11], texts[num][12], ' >', () -> {
             CoolUtil.openURL('https://discord.gg/NqT8mau5VR');

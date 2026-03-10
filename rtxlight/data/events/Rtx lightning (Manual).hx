@@ -1,5 +1,5 @@
 function onEvent(event) {
-	if (event.event.name == "Rtx lightning") {
+	if (event.event.name == "Rtx lightning (Manual)") {
 		if (!event.event.params[0]) return;
 
 		inline function randomColor():Array<Float> {
@@ -91,20 +91,24 @@ inline function applyShader(
 	numly:Int,
 	lysep:Int
 ) {
+	if (char.animateAtlas != null) {
+		char.useRenderTexture = true;
+	}
+
 	char.shader = new CustomShader("RTXLighting");
 	char.shader.overlayColor = msk;
 	char.shader.satinColor = sat;
 	char.shader.innerShadowColor = lght;
 
-var fixedAngle = (angl - char.angle);
+	var fixedAngle = (angl - char.angle);
 
-if (char.flipX)
-    fixedAngle = 360 - fixedAngle;
+	if (char.flipX)
+		fixedAngle = 360 - fixedAngle;
 
-if (char.flipY)
-    fixedAngle = 180 - fixedAngle;
+	if (char.flipY)
+		fixedAngle = 180 - fixedAngle;
 
-char.shader.innerShadowAngle = (fixedAngle - 90) * Math.PI / 180;
+	char.shader.innerShadowAngle = (fixedAngle - 90) * Math.PI / 180;
 
 	char.shader.innerShadowDistance = lghtsz;
 	char.shader.layernumbers = numly;
